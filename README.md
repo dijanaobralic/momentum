@@ -15,3 +15,14 @@ It is **not** a daily to-do list. Big goals (a race, a job search, a finance goa
 **Rebuilding in Expo (React Native)** so it runs as a real Android app, with web as a second target. The app code will appear here step by step.
 
 The first web prototype (Vite + React) is kept on the [`archive/vite-prototype`](../../tree/archive/vite-prototype) branch for reference.
+
+## Run it
+
+```bash
+npm install
+npx expo start
+```
+
+Then scan the QR code with the **Expo Go** app on Android (same Wi-Fi as your computer), or press `w` to open it in a browser.
+
+Stack: Expo SDK 58 · React Native · Expo Router · TypeScript. Learning notes are in [`LEARNING_LOG.md`](LEARNING_LOG.md).

@@ -2,7 +2,7 @@
 
 For a developer (or designer) picking up this project. Read this first, then [`SPEC.md`](SPEC.md) for product detail and [`../CHANGELOG.md`](../CHANGELOG.md) for history.
 
-**Owner:** Dijana Obralic · **State as of:** v0.1.0, 2026-11-02 · **Repo:** `dijanaobralic/momentum` (private)
+**Owner:** Dijana Obralic · **State as of:** 0.2.0-dev (Expo rebuild, blank app), 2026-11-02 · **Repo:** `dijanaobralic/momentum` (private)
 
 ---
 
@@ -55,56 +55,51 @@ Area (4, fixed)
 
 **"Area moved":** an area counts as moved if at least one of its actions this week has progress greater than 0 (`areasMoved()`).
 
-## 4. Current state (v0.1.0)
+## 4. Current state (0.2.0-dev)
 
-**Works:** Week screen with live progress controls · Goals screen · basic Wins list · responsive phone/desktop shell · installable PWA · localStorage persistence.
+**Works:** a blank Expo app with one empty "Week" screen. It runs on Android (Expo Go) and web.
 
-**Doesn't exist yet:** creating or editing goals and actions (everything comes from `src/seed.ts`) · Sunday check-in · sync · real coach · Library · quarterly check-in · tests · deployment.
-
-**Important:** data is per-browser. Progress logged on the phone does not appear on the desktop.
+**Next:** the data types (Area, Goal, Action, Progress) in `src/types.ts`, then the Week screen with sample data, then local storage. That rebuilds what the v0.1.0 web prototype did, natively. After that, the roadmap below.
 
 ## 5. Tech stack and architecture
 
+> **Stack changed on 2026-11-02.** v0.1.0 was a Vite + React web prototype, now archived on the `archive/vite-prototype` branch. It's a useful visual and logic reference (`src/lib.ts`, `src/types.ts` there), but don't build on it. The app is being rebuilt in Expo step by step, because the project is also how the owner is learning Android development. Follow the project's agent instructions: plan before code, small steps, explain the why.
+
 | Layer | Choice | Notes |
 |---|---|---|
-| Build | Vite 8 | `npm run dev` / `build` / `preview` |
-| UI | React 19 + TypeScript | Function components, no router yet (tab state in `App.tsx`) |
-| Styling | One plain CSS file, `src/index.css` | CSS variables for tokens; area color via `.area-{id}` classes setting `--c` / `--soft` |
-| PWA | `vite-plugin-pwa` | Manifest in `vite.config.ts`; icons in `public/` |
-| State | `useStore()` hook in `src/store.ts` | `useState` + `localStorage` under key `momentum:v1` |
-| Backend | None | See roadmap 0.4.0 |
-| Lint | oxlint | `npm run lint` |
+| Framework | **Expo SDK 58 (React Native 0.88) + TypeScript (strict)** | One codebase for Android (primary) and web |
+| Navigation | **Expo Router** | Every file in `src/app/` is a screen; `_layout.tsx` files define navigators |
+| Storage | **`expo-sqlite`** (planned), local-first | Web needs a compatible fallback. Cloud sync only after offline works |
+| State | `useState` / `useReducer` + context | No state library unless there's a named problem it solves |
+| Data access | a `data/` layer (planned) | Screens never touch storage directly, so the backend can change later |
+| Build | Expo Go / dev build → **EAS Build** for an installable APK | |
 
 ```
 src/
-  types.ts            data model — start here
-  lib.ts              areas, week math, progress helpers, COMFORTABLE_LOAD
-  seed.ts             sample data (replace when editing lands)
-  store.ts            state + persistence (swap point for a backend)
-  ProgressControl.tsx progress widget, one branch per kind
-  App.tsx             shell + Week / Goals / Wins / Library screens
-  index.css           all styles and design tokens
-docs/
-  SPEC.md             product spec
-  HANDOFF.md          this file
+  app/
+    _layout.tsx       root navigator (a Stack)
+    index.tsx         Week screen (route "/")
+assets/images/        app icon, adaptive icon, splash
+app.json              app config: name, icons, Android settings → becomes the Android manifest at build time
+AGENTS.md             Expo's own guidance for AI agents (from the template)
+docs/                 SPEC.md, HANDOFF.md
 ```
 
-**Design intent for the store:** `useStore()` is the only place that touches persistence. When a backend is added, keep its return shape (`state`, `setProgress`, …) so the screens don't change.
+**Rules:** install packages with `npx expo install <pkg>` (it picks SDK-compatible versions), never plain `npm install <pkg>`. Check the versioned Expo docs before using any Expo API. Platform differences go in `*.web.tsx` / `*.native.tsx` files or a small `Platform.OS` check.
 
 ## 6. Running, building, deploying
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
-npm run build      # type-check + production build → dist/
-npm run preview    # serve dist/ at http://localhost:4173
+npx expo start     # dev server; prints a QR code
+#   Android: scan the QR with the Expo Go app (phone and computer on the same Wi-Fi)
+#   Web:     press w
+npx tsc --noEmit   # typecheck
 ```
 
-**Deploy (recommended): Vercel.** Import the GitHub repo, use the Vite preset, build command `npm run build`, output `dist`. Every push to `main` deploys. GitHub Pages is not an option while the repo is private on a free plan.
+**Installable APK (later):** EAS Build (`eas build -p android --profile preview`). Not set up yet.
 
-**Install on Android:** open the deployed URL in Chrome → menu → *Add to Home screen*.
-
-**Before any release:** `npm run build` must pass, and you should click through phone width (390 px) and desktop width (1440 px).
+**Before every commit:** `npx tsc --noEmit` passes, and the change has been checked on both Android (Expo Go) and web.
 
 ## 7. Design system
 

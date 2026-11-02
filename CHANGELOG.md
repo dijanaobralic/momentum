@@ -10,6 +10,18 @@ Bump `version` in `package.json` with every release, add an entry here, and tag 
 
 ---
 
+## [0.2.0-dev] — 2026-11-02 · Switched to Expo
+
+### Changed
+- **Stack: Vite + React (web) → Expo SDK 58 + React Native + Expo Router + TypeScript.** Android is the primary target, web the second. The project is also a way to learn Android development, and a web app skips all of the Android pipeline.
+- The v0.1.0 web prototype moved to the `archive/vite-prototype` branch, kept for reference.
+
+### Added
+- A blank Expo app from the SDK 58 default template, reset to a single empty "Week" screen.
+- `AGENTS.md` (Expo's agent guidance, from the template).
+
+---
+
 ## [Unreleased]
 
 The order is the current plan and can change. Details are in [`docs/HANDOFF.md`](docs/HANDOFF.md#roadmap).
