@@ -6,7 +6,9 @@ A personal weekly-goals app built on the idea from *Designing Your Life*: keep m
 
 It is **not** a daily to-do list. Big goals (a race, a job search, a finance goal) carry a plan or tracker; each week you see only the actions that move them forward, plus small one-week goals.
 
-See [`docs/SPEC.md`](docs/SPEC.md) for the product spec and design decisions.
+- [`docs/SPEC.md`](docs/SPEC.md): product spec
+- [`docs/HANDOFF.md`](docs/HANDOFF.md): blueprint for anyone picking up the work
+- [`CHANGELOG.md`](CHANGELOG.md): version history and roadmap
 
 ## Status
 
