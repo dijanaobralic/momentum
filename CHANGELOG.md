@@ -19,6 +19,10 @@ Bump `version` in `package.json` with every release, add an entry here, and tag 
 ### Added
 - A blank Expo app from the SDK 58 default template, reset to a single empty "Week" screen.
 - `AGENTS.md` (Expo's agent guidance, from the template).
+- Domain types (`Area`, `Goal`, `Action`, `Progress`), week math, and the sample week from the v0.1.0 prototype.
+- **Week screen:** four areas, "N of 4 areas moved," and one-tap progress (count, quarter steps, done / not yet). Progress is kept in memory for the session.
+- Unit tests for week math and progress fractions (`npm test`).
+- Space Grotesk and Inter, the typefaces from the mockup.
 
 ---
 

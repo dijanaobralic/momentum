@@ -57,9 +57,9 @@ Area (4, fixed)
 
 ## 4. Current state (0.2.0-dev)
 
-**Works:** a blank Expo app with one empty "Week" screen. It runs on Android (Expo Go) and web.
+**Works:** the Week screen. Four areas, sample goals and actions, and one-tap progress (`count`, `steps`, `binary`). "N of 4 areas moved" updates as you log. It runs on web; Android (Expo Go) is the same screen and still needs a pass on a phone. Progress lives in memory for the session. A refresh brings the sample week back.
 
-**Next:** the data types (Area, Goal, Action, Progress) in `src/types.ts`, then the Week screen with sample data, then local storage. That rebuilds what the v0.1.0 web prototype did, natively. After that, the roadmap below.
+**Next:** local storage behind a data layer, with the same API on web and Android, so a refresh keeps what you logged. After that, the roadmap below.
 
 ## 5. Tech stack and architecture
 
@@ -77,12 +77,20 @@ Area (4, fixed)
 ```
 src/
   app/
-    _layout.tsx       root navigator (a Stack)
-    index.tsx         Week screen (route "/")
-assets/images/        app icon, adaptive icon, splash
-app.json              app config: name, icons, Android settings → becomes the Android manifest at build time
-AGENTS.md             Expo's own guidance for AI agents (from the template)
-docs/                 SPEC.md, HANDOFF.md
+    _layout.tsx              root navigator (a Stack); loads Space Grotesk and Inter
+    index.tsx                Week screen (route "/")
+  components/
+    ProgressControl.tsx      +/−, quarter segments, or a single bar
+  fonts.tsx                  font loading; falls back to the system font if a face fails
+  lib.ts                     week math, progress fractions, areas moved
+  lib.test.ts                unit tests for lib.ts (`npm test`)
+  seed.ts                    sample week, so the screen isn't empty
+  theme.ts                   colors from the mockup
+  types.ts                   Area, Goal, Action, Progress
+assets/images/               app icon, adaptive icon, splash
+app.json                     app config: name, icons, Android settings → becomes the Android manifest at build time
+AGENTS.md                    Expo's own guidance for AI agents (from the template)
+docs/                        SPEC.md, HANDOFF.md
 ```
 
 **Rules:** install packages with `npx expo install <pkg>` (it picks SDK-compatible versions), never plain `npm install <pkg>`. Check the versioned Expo docs before using any Expo API. Platform differences go in `*.web.tsx` / `*.native.tsx` files or a small `Platform.OS` check.
@@ -95,6 +103,7 @@ npx expo start     # dev server; prints a QR code
 #   Android: scan the QR with the Expo Go app (phone and computer on the same Wi-Fi)
 #   Web:     press w
 npx tsc --noEmit   # typecheck
+npm test           # week math and progress fractions
 ```
 
 **Installable APK (later):** EAS Build (`eas build -p android --profile preview`). Not set up yet.
@@ -182,4 +191,4 @@ Each item has acceptance criteria. Build them in order unless the owner says oth
 - **Logging friction:** if the progress data drifts from reality, the coach gives bad advice. Keep logging to one tap, and consider pulling data automatically (Strava) wherever possible.
 - **Skipped check-ins** happen exactly in the overwhelmed weeks that matter most. Design a fallback, not a nag.
 - **Scope creep:** the vision covers a lot. Ship the weekly loop (plan → glance → check-in) well before Library, quarterly check-ins or integrations.
-- **No tests yet.** Add unit tests for `lib.ts` (week math and progress fractions) before the coach logic depends on them.
+- **Tests cover `lib.ts` only.** Week math and progress fractions have unit tests. Add more before the coach logic depends on them. The screens themselves are still untested.
