@@ -23,6 +23,7 @@ Bump `version` in `package.json` with every release, add an entry here, and tag 
 - **Week screen:** four areas, "N of 4 areas moved," and one-tap progress (count, quarter steps, done / not yet). Progress is kept in memory for the session.
 - Unit tests for week math and progress fractions (`npm test`).
 - Space Grotesk and Inter, the typefaces from the mockup.
+- **App shell.** Bottom bar on a phone (Week, Goals, Library, Wins) and a sidebar on a wide window. An orange check-in button opens "How did this week feel?" The feeling is not saved yet.
 
 ---
 
