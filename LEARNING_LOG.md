@@ -66,3 +66,23 @@ One entry per session. Newest at the bottom.
 **Confusing / revisit:** the feeling you tap is forgotten when you close the check-in. That's the next piece of the Sunday flow, along with saving the week itself.
 
 **Next step:** save the week on the device.
+
+---
+
+## 2026-11-05 — The week stays, and Sunday remembers
+
+**Built:** the week is saved on the device. Add, edit, and delete goals and actions. Page to last week and next week. The check-in has three steps and the answer stays on that week. Unfinished actions can move to next week, and they start over there. The coach shows up at 9 actions, which is the sample week, and offers to move an open one. The Check in pill sits in the header so it no longer covers "N of 4 areas moved."
+
+**Learned:**
+- Web already has `localStorage`. Android does not. `expo-sqlite` can install a `localStorage` that talks to a SQLite file, and that import does nothing on web. One pair of functions, `loadStored` and `saveStored`, is the whole data layer. Screens never call them.
+- The first paint has to match the server, so the saved week is read after mount. Until that read finishes, the app draws nothing, and it does not write. Otherwise the sample week would overwrite the saved one.
+- Moving an action is a change of its Monday, plus progress set back to zero. It is the same action, not a copy. The reflection remembers that the work happened; the action itself starts clean next week.
+
+**Native Android equivalent:**
+- `localStorage` here ≈ `SharedPreferences`, or a small SQLite table, written from a repository the screens do not know about
+- The goal and action screens ≈ new destinations on the back stack, opened with an id
+- The week pager ≈ remembering a date in the screen's state, not in the database
+
+**Confusing / revisit:** the sample week is still what you see the first time, including the placeholder goals. Editing replaces it, and Reset sample data brings it back. Sync between the phone and the computer is still absent on purpose.
+
+**Next step:** sign in, and let the phone and the computer share one saved week.

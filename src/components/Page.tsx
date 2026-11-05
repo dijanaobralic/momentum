@@ -11,7 +11,7 @@ export function Page({ children }: { children: ReactNode }) {
   const wide = useWide();
   return (
     <SafeAreaView style={styles.screen} edges={["top", "left", "right"]}>
-      <ScrollView style={styles.scroll} contentContainerStyle={[styles.content, wide ? styles.wide : styles.phone]}>
+      <ScrollView keyboardShouldPersistTaps="handled" style={styles.scroll} contentContainerStyle={[styles.content, wide ? styles.wide : styles.phone]}>
         {children}
       </ScrollView>
     </SafeAreaView>
@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     gap: 14,
   },
-  phone: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 128 },
+  phone: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 96 },
   wide: { paddingHorizontal: 48, paddingTop: 28, paddingBottom: 64, gap: 20 },
-  headRow: { flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between", gap: 16 },
+  headRow: { flexDirection: "row", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: 16 },
   headText: { flex: 1, gap: 6 },
   eyebrow: { fontSize: 14, color: colors.muted },
   title: { fontSize: 32, color: colors.ink, letterSpacing: -0.6 },

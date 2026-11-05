@@ -1,34 +1,62 @@
+import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { ProgressControl } from "../../components/ProgressControl";
 import { CheckInPill } from "../../components/CheckInButton";
 import { Page, PageHeader } from "../../components/Page";
+import { ProgressControl } from "../../components/ProgressControl";
 import { useType } from "../../fonts";
-import { AREAS, areasMoved, COMFORTABLE_LOAD, fraction, mondayOf, weekLabel } from "../../lib";
+import { AREAS, areasMoved, COMFORTABLE_LOAD, fraction, mondayOf, shiftWeek, weekLabel } from "../../lib";
 import { useAppState } from "../../state";
 import { areaColors, colors } from "../../theme";
 import type { Action, Goal } from "../../types";
 import { useWide } from "../../useWide";
 
 export default function WeekScreen() {
-  const { state, setProgress, reset } = useAppState();
+  const { state, week, setWeek, setProgress, moveToWeek, reset } = useAppState();
   const type = useType();
   const wide = useWide();
+  const current = mondayOf();
 
-  const week = mondayOf();
   const actions = state.actions.filter((action) => action.weekOf === week);
   const moved = areasMoved(actions);
   const open = actions.filter((action) => fraction(action.progress) < 1);
   const goalById = new Map(state.goals.map((goal) => [goal.id, goal]));
   const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
+  const reflection = state.reflections.find((item) => item.weekOf === week);
+  const crowded = actions.length >= COMFORTABLE_LOAD;
 
   return (
     <Page>
       <PageHeader
-        eyebrow={`Week of ${weekLabel(week)} · ${today}`}
-        title={moved.size > 0 ? "Hi Dijana, you're moving." : "Hi Dijana. One small step?"}
-        action={wide ? <CheckInPill /> : undefined}
+        eyebrow={week === current ? `This week · ${today}` : weekLabel(week)}
+        title={moved.size > 0 ? "Hi Dijana, you\u2019re moving." : "Hi Dijana. One small step?"}
+        action={<CheckInPill week={week} />}
       />
+      <View style={styles.pager}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Previous week" onPress={() => setWeek(shiftWeek(week, -1))} style={styles.pagerBtn}>
+          <Text style={[styles.pagerMark, { fontFamily: type.heading }]}>‹</Text>
+        </Pressable>
+        <Text style={[styles.pagerLabel, { fontFamily: type.body }]}>Week of {weekLabel(week)}</Text>
+        <Pressable accessibilityRole="button" accessibilityLabel="Next week" onPress={() => setWeek(shiftWeek(week, 1))} style={styles.pagerBtn}>
+          <Text style={[styles.pagerMark, { fontFamily: type.heading }]}>›</Text>
+        </Pressable>
+      </View>
+      {week !== current ? (
+        <Pressable accessibilityRole="button" onPress={() => setWeek(current)} style={styles.backWeek}>
+          <Text style={[styles.backWeekText, { fontFamily: type.body }]}>Back to this week</Text>
+        </Pressable>
+      ) : null}
+
+      {reflection ? (
+        <View style={styles.reflection}>
+          <Text style={[styles.reflectionLabel, { fontFamily: type.bodySemibold }]}>Check-in</Text>
+          <Text style={[styles.reflectionBody, { fontFamily: type.body }]}>You called this week {reflection.feel}.</Text>
+          {reflection.worked ? <Text style={[styles.reflectionBody, { fontFamily: type.body }]}>Worked: {reflection.worked}</Text> : null}
+          {reflection.didnt ? (
+            <Text style={[styles.reflectionBody, { fontFamily: type.body }]}>{"Didn't: "}{reflection.didnt}</Text>
+          ) : null}
+        </View>
+      ) : null}
 
       <View style={styles.card} accessibilityLabel="Momentum this week">
         <Text style={[styles.big, { fontFamily: type.heading }]}>
@@ -56,15 +84,31 @@ export default function WeekScreen() {
         </View>
       </View>
 
-      {actions.length > COMFORTABLE_LOAD ? (
+      {crowded ? (
         <View style={styles.coach} accessibilityLabel="Coach">
           <Text style={[styles.coachLabel, { fontFamily: type.bodySemibold }]}>Coach</Text>
           <Text style={[styles.coachBody, { fontFamily: type.body }]}>
-            This week has {actions.length} actions. Your comfortable range is around {COMFORTABLE_LOAD}. {open.length} are still
-            open. Want to pick one to move to next week?
+            {actions.length > COMFORTABLE_LOAD
+              ? `This week has ${actions.length} actions. Your comfortable range is around ${COMFORTABLE_LOAD}. ${open.length} are still open.`
+              : `This week has ${actions.length} actions, the top of your comfortable range. ${open.length} are still open.`}
           </Text>
+          {open.map((action) => (
+            <View key={action.id} style={styles.coachRow}>
+              <Text style={[styles.coachItem, { fontFamily: type.body }]}>{action.title}</Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Move ${action.title} to next week`}
+                onPress={() => moveToWeek(action.id, shiftWeek(week, 1))}
+                style={styles.coachMove}
+              >
+                <Text style={[styles.coachMoveText, { fontFamily: type.bodySemibold }]}>Next week</Text>
+              </Pressable>
+            </View>
+          ))}
         </View>
       ) : null}
+
+      {actions.length === 0 ? <Text style={[styles.muted, { fontFamily: type.body }]}>Nothing planned for this week.</Text> : null}
 
       <View style={styles.grid}>
         {AREAS.map((area) => {
@@ -80,9 +124,9 @@ export default function WeekScreen() {
                 <Text style={[styles.areaName, { fontFamily: type.bodySemibold, color: areaColors[area.id].text }]}>{area.label}</Text>
                 <View style={styles.chips}>
                   {longGoals.map((goal) => (
-                    <View key={goal.id} style={styles.chip}>
+                    <Pressable key={goal.id} accessibilityRole="button" onPress={() => router.push(`/goal/${goal.id}`)} style={styles.chip}>
                       <Text style={[styles.chipText, { color: areaColors[area.id].text, fontFamily: type.bodyMedium }]}>{goal.title}</Text>
-                    </View>
+                    </Pressable>
                   ))}
                 </View>
               </View>
@@ -93,6 +137,7 @@ export default function WeekScreen() {
                   area={action.area}
                   progress={action.progress}
                   onChange={(progress) => setProgress(action.id, progress)}
+                  onEdit={() => router.push(`/action/${action.id}`)}
                 />
               ))}
               {longGoals
@@ -110,6 +155,9 @@ export default function WeekScreen() {
         })}
       </View>
 
+      <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: "/action/[id]", params: { id: "new", week } })} style={styles.add}>
+        <Text style={[styles.addText, { fontFamily: type.bodySemibold }]}>Add an action</Text>
+      </Pressable>
       <Pressable accessibilityRole="button" onPress={reset} style={styles.reset}>
         <Text style={[styles.resetText, { fontFamily: type.body }]}>Reset sample data</Text>
       </Pressable>
@@ -122,6 +170,15 @@ function actionTitle(action: Action): string {
 }
 
 const styles = StyleSheet.create({
+  pager: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: -6 },
+  pagerBtn: { width: 44, height: 44, alignItems: "center", justifyContent: "center" },
+  pagerMark: { fontSize: 28, color: colors.ink },
+  pagerLabel: { fontSize: 15, color: colors.ink },
+  backWeek: { alignSelf: "flex-start", minHeight: 36, justifyContent: "center" },
+  backWeekText: { fontSize: 14, color: colors.muted, textDecorationLine: "underline" },
+  reflection: { backgroundColor: "#FBEDE8", borderRadius: 18, paddingHorizontal: 16, paddingVertical: 14, gap: 4 },
+  reflectionLabel: { fontSize: 13, color: "#8A2F17" },
+  reflectionBody: { fontSize: 15, lineHeight: 22, color: colors.ink },
   card: {
     backgroundColor: colors.card,
     borderWidth: 1,
@@ -137,15 +194,13 @@ const styles = StyleSheet.create({
   dotWrap: { alignItems: "center", gap: 6 },
   dot: { width: 40, height: 40, borderRadius: 20 },
   dotLabel: { fontSize: 12, color: colors.ink2 },
-  coach: {
-    backgroundColor: colors.ink,
-    borderRadius: 18,
-    paddingHorizontal: 20,
-    paddingVertical: 18,
-    gap: 6,
-  },
+  coach: { backgroundColor: colors.ink, borderRadius: 18, paddingHorizontal: 20, paddingVertical: 18, gap: 10 },
   coachLabel: { fontSize: 13, color: colors.coachLabel },
   coachBody: { fontSize: 15, lineHeight: 23, color: colors.onCoach },
+  coachRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  coachItem: { flex: 1, fontSize: 15, color: colors.onCoach },
+  coachMove: { minHeight: 36, paddingHorizontal: 10, borderRadius: 999, borderWidth: 1, borderColor: colors.coachLabel, justifyContent: "center" },
+  coachMoveText: { fontSize: 13, color: colors.coachLabel },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 16 },
   areaCard: {
     flexGrow: 1,
@@ -167,6 +222,17 @@ const styles = StyleSheet.create({
   why: { backgroundColor: colors.ground, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10 },
   whyText: { fontSize: 13, lineHeight: 19, color: colors.ink },
   whyLabel: { color: colors.muted },
+  add: {
+    minHeight: 48,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.ink,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "flex-start",
+    paddingHorizontal: 18,
+  },
+  addText: { fontSize: 15, color: colors.ink },
   reset: { alignSelf: "flex-start", paddingVertical: 8 },
   resetText: { fontSize: 13, color: colors.muted, textDecorationLine: "underline" },
 });

@@ -57,9 +57,9 @@ Area (4, fixed)
 
 ## 4. Current state (0.2.0-dev)
 
-**Works:** the app shell around the Week screen. On a phone, a bottom bar (Week, Goals, Library, Wins) and an orange check-in button. On a wide window, a sidebar with the name and the mantra, and a Check in pill on Week. Goals and Wins read the same sample week. The check-in screen asks how the week felt; that choice is not saved yet. Progress lives in memory for the session.
+**Works:** the app shell, a saved week, editing, and the Sunday check-in. On a phone, a bottom bar (Week, Goals, Library, Wins). On a wide window, a sidebar with the name and the mantra. Check in sits in the Week header on every width, so it does not cover the areas card. You can page to other weeks, add and edit goals and actions, and move an unfinished action to next week. The check-in saves how the week felt, what worked, what didn't, and which actions moved. A refresh keeps all of that on the device. The sample week is still the first thing you see, until you change it. The coach appears at 9 actions.
 
-**Next:** local storage behind a data layer, with the same API on web and Android, so a refresh keeps what you logged. After that, finish the Sunday check-in (the other two steps, and saving the reflection).
+**Next:** sign-in and sync, so a week logged on the phone shows up on the computer. Keep writing on the device first. The coach's real job (planned vs. done vs. how the week felt) comes after there is more than one saved week to learn from.
 
 ## 5. Tech stack and architecture
 
@@ -69,33 +69,40 @@ Area (4, fixed)
 |---|---|---|
 | Framework | **Expo SDK 58 (React Native 0.88) + TypeScript (strict)** | One codebase for Android (primary) and web |
 | Navigation | **Expo Router** | Every file in `src/app/` is a screen; `_layout.tsx` files define navigators |
-| Storage | **`expo-sqlite`** (planned), local-first | Web needs a compatible fallback. Cloud sync only after offline works |
-| State | `useState` / `useReducer` + context | No state library unless there's a named problem it solves |
-| Data access | a `data/` layer (planned) | Screens never touch storage directly, so the backend can change later |
+| Storage | **`expo-sqlite` localStorage on native, `localStorage` on web** | Same `loadStored` / `saveStored` API. Cloud sync only after offline works |
+| State | `useState` + context | No state library unless there's a named problem it solves |
+| Data access | `src/data/` | Screens never touch storage directly, so the backend can change later |
 | Build | Expo Go / dev build → **EAS Build** for an installable APK | |
 
 ```
 src/
   app/
-    _layout.tsx              root stack; loads the fonts and holds the week in memory
+    _layout.tsx              root stack; loads the fonts and holds the saved week
     (tabs)/_layout.tsx       bottom bar on a phone, sidebar on a wide window
     (tabs)/index.tsx         Week screen (route "/")
     (tabs)/goals.tsx         Goals
     (tabs)/library.tsx       Library placeholder
     (tabs)/wins.tsx          Wins
-    check-in.tsx             "How did this week feel?"
+    check-in.tsx             Sunday check-in, three steps
+    goal/[id].tsx            create or edit a goal
+    action/[id].tsx          create or edit an action
   components/
     AppTabBar.tsx
-    CheckInButton.tsx        orange button on a phone, pill on a wide window
+    CheckInButton.tsx        Check in pill in the Week header
+    Form.tsx                 shared fields for the editors and the check-in
     Page.tsx                 shared page scroll and header
     ProgressControl.tsx      +/−, quarter segments, or a single bar
+  data/
+    store.ts                 load and save the week; screens do not import storage
+    installStorage.ts        no-op on web, where localStorage already exists
+    installStorage.native.ts localStorage backed by SQLite on Android and iOS
   fonts.tsx                  font loading; falls back to the system font if a face fails
-  lib.ts                     week math, progress fractions, areas moved
+  lib.ts                     week math, progress fractions, parsing a saved week
   lib.test.ts                unit tests for lib.ts (`npm test`)
-  seed.ts                    sample week, so the screen isn't empty
-  state.tsx                  the in-memory week, shared by the tabs
+  seed.ts                    sample week, so the first launch isn't empty
+  state.tsx                  the week, shared by the tabs, saved after it loads
   theme.ts                   colors from the mockup
-  types.ts                   Area, Goal, Action, Progress
+  types.ts                   Area, Goal, Action, Progress, WeeklyReflection
 assets/images/               app icon, adaptive icon, splash
 app.json                     app config: name, icons, Android settings → becomes the Android manifest at build time
 AGENTS.md                    Expo's own guidance for AI agents (from the template)
@@ -133,10 +140,10 @@ The source of truth is the **"Momentum — App Mockup"** design canvas (Desktop 
 
 ## 8. Roadmap
 
-Each item has acceptance criteria. Build them in order unless the owner says otherwise.
+Each item has acceptance criteria. 0.2.0 and 0.3.0 are in the app. Build the rest in order unless the owner says otherwise.
 
-### 0.2.0 — Sunday check-in
-- Entry: a button on Week (desktop) and an orange floating button (phone).
+### 0.2.0 — Sunday check-in (in the app)
+- Entry: a Check in pill in the Week header. It used to float on the phone, and it covered the areas card, so it stays in the header on every width.
 - Step 1: "How did this week feel?" with Light / Steady / Full / Too much (one tap).
 - Step 2: "What worked?" and "What didn't?" free text. Voice dictation is nice-to-have.
 - Step 3: a summary (actions done, areas moved, carried over) and the next week's draft.
