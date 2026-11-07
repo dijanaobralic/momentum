@@ -86,3 +86,15 @@ One entry per session. Newest at the bottom.
 **Confusing / revisit:** the sample week is still what you see the first time, including the placeholder goals. Editing replaces it, and Reset sample data brings it back. Sync between the phone and the computer is still absent on purpose.
 
 **Next step:** sign in, and let the phone and the computer share one saved week.
+
+---
+
+## 2026-11-06 — The sidebar folds
+
+**Built:** on a wide window the sidebar stays 232px, and a ‹ control folds it to icons. › opens it again. The phone still uses the bottom bar.
+
+**Learned:** `flex: 1` on the sidebar made it share the row with the week, so each took half the window. A fixed width with `flexGrow: 0` keeps the week in the remaining space.
+
+**Native Android equivalent:** a `NavigationRail` can be collapsed to icons. The expanded form is closer to a permanent drawer.
+
+**Next step:** sign in, and let the phone and the computer share one saved week.

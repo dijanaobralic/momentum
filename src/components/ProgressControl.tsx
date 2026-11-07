@@ -69,6 +69,7 @@ export function ProgressControl({ title, area, progress, onChange, onEdit }: Pro
                 accessibilityLabel={`Set ${title} to ${n * 25}%`}
                 accessibilityState={{ selected: on }}
                 onPress={() => onChange({ kind: "steps", value: tapStep(progress.value, n) })}
+                hitSlop={{ top: 18, bottom: 18 }}
                 style={[styles.seg, { backgroundColor: on ? palette.fill : palette.soft }]}
               />
             );
@@ -82,6 +83,7 @@ export function ProgressControl({ title, area, progress, onChange, onEdit }: Pro
           accessibilityLabel={`Mark ${title} ${progress.done ? "not done" : "done"}`}
           accessibilityState={{ selected: progress.done }}
           onPress={() => onChange({ kind: "binary", done: !progress.done })}
+          hitSlop={{ top: 18, bottom: 18 }}
           style={[styles.binary, { backgroundColor: progress.done ? palette.fill : palette.soft }]}
         />
       )}
@@ -112,7 +114,7 @@ const styles = StyleSheet.create({
   },
   iconBtnText: { fontSize: 22, lineHeight: 26, color: colors.ink },
   segs: { flexDirection: "row", gap: 4 },
-  seg: { flex: 1, height: 30, borderRadius: 8 },
+  seg: { flex: 1, height: 8, borderRadius: 999 },
   // `flex: 0` is shorthand for a 0% basis, which collapses this bar's height in a column.
-  binary: { width: "100%", height: 30, borderRadius: 8, flexGrow: 0, flexShrink: 0 },
+  binary: { width: "100%", height: 8, borderRadius: 999, flexGrow: 0, flexShrink: 0 },
 });

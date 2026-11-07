@@ -4,7 +4,7 @@ export const AREAS: { id: Area; label: string; lifeGauge: string }[] = [
   { id: "health", label: "Health", lifeGauge: "Health" },
   { id: "work", label: "Work", lifeGauge: "Work" },
   { id: "fun", label: "Fun", lifeGauge: "Play" },
-  { id: "social", label: "Social", lifeGauge: "Love" },
+  { id: "social", label: "Love", lifeGauge: "Love" },
 ];
 
 /** Weeks start on Monday. Returns the Monday (local time) of the week containing `d`, as YYYY-MM-DD. */

@@ -41,7 +41,7 @@ Area (4, fixed)
 | Health | Health | `#2E7A57` |
 | Work (incl. finance, job hunt) | Work | `#2F5FA8` |
 | Fun | Play | `#E08A3C` (text `#A55312`) |
-| Social | Love | `#B04A86` |
+| Love | Love | `#B04A86` |
 
 **Progress kinds** (`src/types.ts`):
 
@@ -57,7 +57,7 @@ Area (4, fixed)
 
 ## 4. Current state (0.2.0-dev)
 
-**Works:** the app shell, a saved week, editing, and the Sunday check-in. On a phone, a bottom bar (Week, Goals, Library, Wins). On a wide window, a sidebar with the name and the mantra. Check in sits in the Week header on every width, so it does not cover the areas card. You can page to other weeks, add and edit goals and actions, and move an unfinished action to next week. The check-in saves how the week felt, what worked, what didn't, and which actions moved. A refresh keeps all of that on the device. The sample week is still the first thing you see, until you change it. The coach appears at 9 actions.
+**Works:** the app shell, a saved week, editing, and the Sunday check-in. On a phone, a bottom bar (Week, Goals, Library, Wins). On a wide window, a sidebar with the name and the mantra. A ‹ control folds that sidebar down to icons, and › opens it again. Check in sits in the Week header on every width, so it does not cover the areas card. You can page to other weeks, add and edit goals and actions, and move an unfinished action to next week. The check-in saves how the week felt, what worked, what didn't, and which actions moved. A refresh keeps all of that on the device. The sample week is still the first thing you see, until you change it. The coach appears at 9 actions.
 
 **Next:** sign-in and sync, so a week logged on the phone shows up on the computer. Keep writing on the device first. The coach's real job (planned vs. done vs. how the week felt) comes after there is more than one saved week to learn from.
 
@@ -134,7 +134,7 @@ The source of truth is the **"Momentum — App Mockup"** design canvas (Desktop 
 - **Colors:** ground `#F4F3EF`, card `#FFFFFF`, ink `#1C1E21`, muted `#5F6368`, line `#E2E0D9`, accent `#D2512F` (check-in button and the coach's highlights only). Area colors are in §3.
 - **Coach surfaces:** a dark card (`#1C1E21`) with salmon label `#F2A38E`, or a light card `#FBEDE8` with label `#8A2F17`.
 - **Shape:** cards use 16 px radius (18 on phone); pills use 999 px.
-- **Touch targets:** at least 44 px on phone. Progress segments are 30 px tall on phone.
+- **Touch targets:** at least 44 px on phone. Progress bars are 8 px tall; the tap area around them stays large.
 - **Copy tone:** warm, short, never guilt. "You're moving," not "You're behind."
 - **No:** emoji in the UI, gradient backgrounds, streak counters.
 

@@ -23,13 +23,14 @@ Bump `version` in `package.json` with every release, add an entry here, and tag 
 - **Week screen:** four areas, "N of 4 areas moved," and one-tap progress (count, quarter steps, done / not yet).
 - Unit tests for week math and progress fractions (`npm test`).
 - Space Grotesk and Inter, the typefaces from the mockup.
-- **App shell.** Bottom bar on a phone (Week, Goals, Library, Wins) and a sidebar on a wide window.
+- **App shell.** Bottom bar on a phone (Week, Goals, Library, Wins) and a sidebar on a wide window. The sidebar stays a fixed width and folds to icons.
 - **Saved on the device.** The week is stored under `momentum:v1`. Web uses `localStorage`. Android and iOS use the same API, backed by `expo-sqlite`. A refresh keeps what you logged. "Reset sample data" brings the sample week back.
 - **Editing.** Add, edit, and delete goals and actions. A number in a new action's title starts it as a count; otherwise it starts as quarters.
 - **Weeks.** Previous and next week, and a way back to this week. Unfinished actions can move to next week from the coach or the check-in, and they start over there.
 - **Sunday check-in.** Three steps: how the week felt, what worked and what didn't, then a summary and what to carry. The reflection stays on that week.
 - **Coach.** Shows when a week has 9 or more actions, with a shorter note at exactly 9 and a scale-down note above that. Each open action can move to next week.
 - The Check in pill lives in the Week header on every width, so it no longer covers the "areas moved" card.
+- The fourth area is labeled Love. Quarter segments and yes/no bars are the same thin height as the count bars.
 
 ---
 
