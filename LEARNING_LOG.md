@@ -46,3 +46,23 @@ One entry per session. Newest at the bottom.
 **Confusing / revisit:** progress disappears on refresh. That's expected until storage exists. Worth feeling it once so the next step has a reason. Also: `flex: 0` is not "don't grow." In CSS that shorthand sets the basis to 0, which flattened the yes/no bar. Use `flexGrow: 0` when that's what you mean.
 
 **Next step:** save the week on the device, with the same functions on web and Android.
+
+---
+
+## 2026-11-03 — The app shell
+
+**Built:** the frame around the Week screen. A phone gets a bottom bar and an orange check-in button. A wide window gets a sidebar, with the name and the mantra, and a Check in pill. Goals and Wins show the same sample week. The check-in asks how the week felt. That answer is not saved yet.
+
+**Learned:**
+- The screen and the frame are different jobs. The Week screen scrolls the week. The shell decides whether you see tabs or a sidebar. Putting "momentum." inside the scroll made the phone feel like a web page.
+- One list of actions has to live above the tabs. Otherwise logging a ride on Week would not show up on Wins.
+- The accent color is only for the check-in. Everything else stays in the area colors, so the orange button is the one thing that asks for a decision.
+
+**Native Android equivalent:**
+- The bottom bar ≈ a `NavigationBar` in Compose, with one destination per tab
+- The sidebar on a wide window ≈ a `NavigationRail` or a permanent drawer
+- The check-in screen pushed on top ≈ a new destination in the back stack
+
+**Confusing / revisit:** the feeling you tap is forgotten when you close the check-in. That's the next piece of the Sunday flow, along with saving the week itself.
+
+**Next step:** save the week on the device.

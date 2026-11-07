@@ -14,7 +14,7 @@ It is **not** a daily to-do list. Big goals (a race, a job search, a finance goa
 
 **Rebuilding in Expo (React Native)** so it runs as a real Android app, with web as a second target.
 
-The Week screen is in place: four areas, sample goals, and one-tap progress. What you log stays for the session. Saving it on the device is the next step.
+The Week screen is in place, inside the app shell: bottom tabs on a phone, a sidebar on a wide window, and an orange check-in button. What you log stays for the session. Saving it on the device is the next step.
 
 The first web prototype (Vite + React) is kept on the [`archive/vite-prototype`](../../tree/archive/vite-prototype) branch for reference.
 

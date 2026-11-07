@@ -57,9 +57,9 @@ Area (4, fixed)
 
 ## 4. Current state (0.2.0-dev)
 
-**Works:** the Week screen. Four areas, sample goals and actions, and one-tap progress (`count`, `steps`, `binary`). "N of 4 areas moved" updates as you log. It runs on web; Android (Expo Go) is the same screen and still needs a pass on a phone. Progress lives in memory for the session. A refresh brings the sample week back.
+**Works:** the app shell around the Week screen. On a phone, a bottom bar (Week, Goals, Library, Wins) and an orange check-in button. On a wide window, a sidebar with the name and the mantra, and a Check in pill on Week. Goals and Wins read the same sample week. The check-in screen asks how the week felt; that choice is not saved yet. Progress lives in memory for the session.
 
-**Next:** local storage behind a data layer, with the same API on web and Android, so a refresh keeps what you logged. After that, the roadmap below.
+**Next:** local storage behind a data layer, with the same API on web and Android, so a refresh keeps what you logged. After that, finish the Sunday check-in (the other two steps, and saving the reflection).
 
 ## 5. Tech stack and architecture
 
@@ -77,14 +77,23 @@ Area (4, fixed)
 ```
 src/
   app/
-    _layout.tsx              root navigator (a Stack); loads Space Grotesk and Inter
-    index.tsx                Week screen (route "/")
+    _layout.tsx              root stack; loads the fonts and holds the week in memory
+    (tabs)/_layout.tsx       bottom bar on a phone, sidebar on a wide window
+    (tabs)/index.tsx         Week screen (route "/")
+    (tabs)/goals.tsx         Goals
+    (tabs)/library.tsx       Library placeholder
+    (tabs)/wins.tsx          Wins
+    check-in.tsx             "How did this week feel?"
   components/
+    AppTabBar.tsx
+    CheckInButton.tsx        orange button on a phone, pill on a wide window
+    Page.tsx                 shared page scroll and header
     ProgressControl.tsx      +/−, quarter segments, or a single bar
   fonts.tsx                  font loading; falls back to the system font if a face fails
   lib.ts                     week math, progress fractions, areas moved
   lib.test.ts                unit tests for lib.ts (`npm test`)
   seed.ts                    sample week, so the screen isn't empty
+  state.tsx                  the in-memory week, shared by the tabs
   theme.ts                   colors from the mockup
   types.ts                   Area, Goal, Action, Progress
 assets/images/               app icon, adaptive icon, splash

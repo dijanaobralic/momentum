@@ -5,6 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 
 import { fontMap, FontReadyProvider } from "../fonts";
+import { AppStateProvider } from "../state";
 import { colors } from "../theme";
 
 SplashScreen.preventAutoHideAsync().catch(() => {
@@ -26,13 +27,18 @@ export default function RootLayout() {
 
   return (
     <FontReadyProvider ready={loaded}>
-      <StatusBar style="dark" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: colors.ground },
-        }}
-      />
+      <AppStateProvider>
+        <StatusBar style="dark" />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: colors.ground },
+          }}
+        >
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="check-in" options={{ presentation: "modal", animation: "slide_from_bottom" }} />
+        </Stack>
+      </AppStateProvider>
     </FontReadyProvider>
   );
 }
