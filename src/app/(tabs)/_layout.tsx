@@ -15,7 +15,6 @@ export default function TabLayout() {
         screenOptions={{
           headerShown: false,
           tabBarPosition: wide ? "left" : "bottom",
-          tabBarStyle: wide ? { width: 240 } : undefined,
         }}
       >
         <Tabs.Screen name="index" options={{ title: "Week" }} />

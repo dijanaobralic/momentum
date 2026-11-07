@@ -1,4 +1,5 @@
 import { SymbolView } from "expo-symbols";
+import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -18,24 +19,53 @@ interface Props {
   navigateToTab: (routeKey: string) => void;
 }
 
-/** Phone: a bottom bar. Wide window: a sidebar, which is where the name and the mantra live. */
+const SIDEBAR_OPEN = 176;
+const SIDEBAR_CLOSED = 76;
+
+/** Phone: a bottom bar. Wide window: a sidebar that can fold down to icons. */
 export function AppTabBar({ state, navigateToTab }: Props) {
   const wide = useWide();
   const insets = useSafeAreaInsets();
   const type = useType();
   const current = state.routes[state.index]?.name;
+  const [collapsed, setCollapsed] = useState(false);
+  const folded = wide && collapsed;
+  const sidebarWidth = folded ? SIDEBAR_CLOSED : SIDEBAR_OPEN;
 
   return (
     <View
       style={[
         wide ? styles.side : styles.bottom,
-        wide ? { paddingTop: Math.max(insets.top, 24) } : { paddingBottom: Math.max(insets.bottom, 10) },
+        wide
+          ? {
+              width: sidebarWidth,
+              minWidth: sidebarWidth,
+              maxWidth: sidebarWidth,
+              flexBasis: sidebarWidth,
+              flexGrow: 0,
+              flexShrink: 0,
+              paddingTop: Math.max(insets.top, 24),
+              paddingHorizontal: folded ? 10 : 8,
+            }
+          : { paddingBottom: Math.max(insets.bottom, 10) },
       ]}
     >
       {wide ? (
-        <Text style={[styles.brand, { fontFamily: type.headingBold }]}>
-          momentum<Text style={styles.brandDot}>.</Text>
-        </Text>
+        <View style={[styles.brandRow, folded && styles.brandRowFolded]}>
+          {folded ? null : (
+            <Text numberOfLines={1} style={[styles.brand, { fontFamily: type.headingBold }]}>
+              momentum<Text style={styles.brandDot}>.</Text>
+            </Text>
+          )}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={folded ? "Show sidebar" : "Hide sidebar"}
+            onPress={() => setCollapsed((value) => !value)}
+            style={styles.toggle}
+          >
+            <Text style={[styles.toggleMark, { fontFamily: type.heading }]}>{folded ? "›" : "‹"}</Text>
+          </Pressable>
+        </View>
       ) : null}
       <View style={wide ? styles.sideList : styles.bottomList}>
         {state.routes.map((route) => {
@@ -50,7 +80,7 @@ export function AppTabBar({ state, navigateToTab }: Props) {
               accessibilityState={{ selected: active }}
               accessibilityLabel={tab.label}
               onPress={() => navigateToTab(route.key)}
-              style={[styles.item, wide ? styles.sideItem : styles.bottomItem, wide && active && styles.sideItemOn]}
+              style={[styles.item, wide ? styles.sideItem : styles.bottomItem, folded && styles.sideItemFolded, wide && active && styles.sideItemOn]}
             >
               <SymbolView
                 name={{ ios: tab.ios, android: tab.android, web: tab.android }}
@@ -58,27 +88,31 @@ export function AppTabBar({ state, navigateToTab }: Props) {
                 size={22}
                 fallback={<View style={[styles.iconFallback, { borderColor: tint }]} />}
               />
-              <Text style={[styles.label, wide ? styles.sideLabel : styles.bottomLabel, { fontFamily: active ? type.bodySemibold : type.body, color: tint }]}>
-                {tab.label}
-              </Text>
+              {folded ? null : (
+                <Text numberOfLines={1} style={[styles.label, wide ? styles.sideLabel : styles.bottomLabel, { fontFamily: active ? type.bodySemibold : type.body, color: tint }]}>
+                  {tab.label}
+                </Text>
+              )}
             </Pressable>
           );
         })}
       </View>
-      {wide ? <Text style={[styles.mantra, { fontFamily: type.bodyItalic }]}>“Depression can’t hit a moving target.”</Text> : null}
+      {wide && !folded ? (
+        <Text style={[styles.mantra, { fontFamily: type.bodyItalic }]}>“Depression can’t hit a moving target.”</Text>
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   side: {
-    width: 240,
-    flex: 1,
+    flexGrow: 0,
+    flexShrink: 0,
+    alignSelf: "stretch",
     backgroundColor: colors.panel,
     borderRightWidth: 1,
     borderRightColor: colors.line,
-    paddingHorizontal: 20,
-    paddingBottom: 28,
+    paddingBottom: 16,
   },
   bottom: {
     backgroundColor: colors.card,
@@ -87,7 +121,11 @@ const styles = StyleSheet.create({
     paddingTop: 6,
     paddingHorizontal: 8,
   },
-  brand: { fontSize: 22, color: colors.ink, letterSpacing: -0.4, paddingHorizontal: 12, paddingBottom: 24 },
+  brandRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 16, width: "100%" },
+  brandRowFolded: { justifyContent: "center" },
+  brand: { fontSize: 20, color: colors.ink, letterSpacing: -0.4, flexGrow: 1, flexShrink: 1 },
+  toggle: { width: 44, height: 44, minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center", flexShrink: 0 },
+  toggleMark: { fontSize: 26, color: colors.ink, lineHeight: 28 },
   brandDot: { color: colors.accent },
   sideList: { gap: 6 },
   bottomList: { flexDirection: "row" },
@@ -97,10 +135,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     gap: 10,
     paddingVertical: 11,
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     borderRadius: 10,
     minHeight: 44,
   },
+  sideItemFolded: { justifyContent: "center", paddingHorizontal: 0, gap: 0 },
   sideItemOn: { backgroundColor: colors.ink },
   bottomItem: { flex: 1, flexDirection: "column", gap: 3, minHeight: 48, justifyContent: "center" },
   label: { fontSize: 15 },
