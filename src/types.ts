@@ -32,7 +32,21 @@ export interface Action {
   progress: Progress;
 }
 
+export const FEELINGS = ["Light", "Steady", "Full", "Too much"] as const;
+export type Feel = (typeof FEELINGS)[number];
+
+/** Saved at the end of a Sunday check-in. `planned` and `done` are the week's counts at that moment. */
+export interface WeeklyReflection {
+  weekOf: string;
+  feel: Feel;
+  worked: string;
+  didnt: string;
+  planned: number;
+  done: number;
+}
+
 export interface AppState {
   goals: Goal[];
   actions: Action[];
+  reflections: WeeklyReflection[];
 }

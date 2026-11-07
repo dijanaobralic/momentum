@@ -1,19 +1,26 @@
-import { StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Page, PageHeader, SectionLabel } from "../../components/Page";
 import { useType } from "../../fonts";
-import { AREAS, fraction, mondayOf } from "../../lib";
+import { AREAS, fraction } from "../../lib";
 import { useAppState } from "../../state";
 import { areaColors, colors } from "../../theme";
 
 export default function GoalsScreen() {
-  const { state } = useAppState();
+  const { state, week } = useAppState();
   const type = useType();
-  const week = mondayOf();
 
   return (
     <Page>
-      <PageHeader title="Goals" />
+      <PageHeader
+        title="Goals"
+        action={
+          <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: "/goal/[id]", params: { id: "new" } })} style={styles.add}>
+            <Text style={[styles.addText, { fontFamily: type.bodySemibold }]}>Add a goal</Text>
+          </Pressable>
+        }
+      />
       <Text style={[styles.intro, { fontFamily: type.body }]}>Big goals carry a plan or tracker. Small ones live for one week.</Text>
       {(["long", "week"] as const).map((horizon) => (
         <View key={horizon} style={styles.section}>
@@ -26,7 +33,7 @@ export default function GoalsScreen() {
                 const pct = actions.length ? actions.reduce((sum, action) => sum + fraction(action.progress), 0) / actions.length : 0;
                 const palette = areaColors[goal.area];
                 return (
-                  <View key={goal.id} style={[styles.card, { borderTopColor: palette.fill }]}>
+                  <Pressable key={goal.id} accessibilityRole="button" onPress={() => router.push(`/goal/${goal.id}`)} style={[styles.card, { borderTopColor: palette.fill }]}>
                     <Text style={[styles.area, { fontFamily: type.bodySemibold, color: palette.text }]}>
                       {AREAS.find((area) => area.id === goal.area)?.label}
                     </Text>
@@ -40,7 +47,7 @@ export default function GoalsScreen() {
                     {goal.artifactTitle ? (
                       <Text style={[styles.artifact, { fontFamily: type.bodyMedium, color: palette.text }]}>{goal.artifactTitle}</Text>
                     ) : null}
-                  </View>
+                  </Pressable>
                 );
               })}
           </View>
@@ -51,6 +58,8 @@ export default function GoalsScreen() {
 }
 
 const styles = StyleSheet.create({
+  add: { minHeight: 44, paddingHorizontal: 14, borderRadius: 999, borderWidth: 1, borderColor: colors.ink, alignItems: "center", justifyContent: "center" },
+  addText: { fontSize: 15, color: colors.ink },
   intro: { fontSize: 14, lineHeight: 21, color: colors.muted, marginTop: -6 },
   section: { gap: 10 },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 16 },

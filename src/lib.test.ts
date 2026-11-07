@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { areasMoved, bumpCount, fraction, isDone, mondayOf, progressLabel, tapStep, weekLabel } from "./lib";
+import { areasMoved, bumpCount, defaultProgress, fraction, freshProgress, isDone, mondayOf, parseStored, progressLabel, shiftWeek, tapStep, weekLabel } from "./lib";
 import type { Action } from "./types";
 
 describe("mondayOf", () => {
@@ -57,6 +57,35 @@ describe("progress helpers", () => {
   it("steps back when the current quarter is tapped again", () => {
     assert.equal(tapStep(2, 4), 4);
     assert.equal(tapStep(2, 2), 1);
+  });
+
+  it("shifts a Monday by one week", () => {
+    assert.equal(shiftWeek("2026-11-02", 1), "2026-11-09");
+    assert.equal(shiftWeek("2026-11-02", -1), "2026-10-26");
+  });
+
+  it("picks a count when the title has a number, and starts a move over at zero", () => {
+    assert.deepEqual(defaultProgress("Ride 4 h"), { kind: "count", done: 0, target: 4 });
+    assert.deepEqual(defaultProgress("Print the photos"), { kind: "steps", value: 0 });
+    assert.deepEqual(freshProgress({ kind: "count", done: 2.5, target: 4, unit: "h", step: 0.5 }), {
+      kind: "count",
+      done: 0,
+      target: 4,
+      unit: "h",
+      step: 0.5,
+    });
+  });
+
+  it("reads a saved week and ignores a broken one", () => {
+    const raw = JSON.stringify({
+      goals: [{ id: "g", area: "health", title: "Race", horizon: "long" }],
+      actions: [{ id: "a", weekOf: "2026-11-02", area: "health", title: "Ride", progress: { kind: "binary", done: true } }],
+    });
+    const stored = parseStored(raw);
+    assert.equal(stored?.goals.length, 1);
+    assert.equal(stored?.reflections.length, 0);
+    assert.equal(parseStored("nope"), null);
+    assert.equal(parseStored(JSON.stringify({ goals: [] })), null);
   });
 
   it("counts an area as moved from any progress, including a partial one", () => {

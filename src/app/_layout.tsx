@@ -36,7 +36,7 @@ export default function RootLayout() {
           }}
         >
           <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="check-in" options={{ presentation: "modal", animation: "slide_from_bottom" }} />
+          <Stack.Screen name="check-in" options={{ animation: "slide_from_bottom" }} />
         </Stack>
       </AppStateProvider>
     </FontReadyProvider>

@@ -5,6 +5,7 @@ import type { AppState } from "./types";
 export function seed(): AppState {
   const week = mondayOf();
   return {
+    reflections: [],
     goals: [
       {
         id: "race",

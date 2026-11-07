@@ -10,10 +10,11 @@ interface Props {
   area: Area;
   progress: Progress;
   onChange: (progress: Progress) => void;
+  onEdit?: () => void;
 }
 
 /** One control per progress kind: +/− for counts, tappable quarters for fuzzy tasks, a single bar for yes/no. */
-export function ProgressControl({ title, area, progress, onChange }: Props) {
+export function ProgressControl({ title, area, progress, onChange, onEdit }: Props) {
   const type = useType();
   const palette = areaColors[area];
   const label = progressLabel(progress);
@@ -22,7 +23,14 @@ export function ProgressControl({ title, area, progress, onChange }: Props) {
   return (
     <View style={styles.pc}>
       <View style={styles.head}>
-        <Text style={[styles.title, { fontFamily: type.body }, done && styles.done]}>{title}</Text>
+        <View style={styles.titleWrap}>
+          <Text style={[styles.title, { fontFamily: type.body }, done && styles.done]}>{title}</Text>
+          {onEdit ? (
+            <Pressable accessibilityRole="button" accessibilityLabel={`Edit ${title}`} hitSlop={10} onPress={onEdit}>
+              <Text style={[styles.edit, { fontFamily: type.body }]}>Edit</Text>
+            </Pressable>
+          ) : null}
+        </View>
         <Text style={[styles.label, { fontFamily: type.bodySemibold, color: palette.text }]}>{label}</Text>
       </View>
 
@@ -61,6 +69,7 @@ export function ProgressControl({ title, area, progress, onChange }: Props) {
                 accessibilityLabel={`Set ${title} to ${n * 25}%`}
                 accessibilityState={{ selected: on }}
                 onPress={() => onChange({ kind: "steps", value: tapStep(progress.value, n) })}
+                hitSlop={{ top: 18, bottom: 18 }}
                 style={[styles.seg, { backgroundColor: on ? palette.fill : palette.soft }]}
               />
             );
@@ -74,6 +83,7 @@ export function ProgressControl({ title, area, progress, onChange }: Props) {
           accessibilityLabel={`Mark ${title} ${progress.done ? "not done" : "done"}`}
           accessibilityState={{ selected: progress.done }}
           onPress={() => onChange({ kind: "binary", done: !progress.done })}
+          hitSlop={{ top: 18, bottom: 18 }}
           style={[styles.binary, { backgroundColor: progress.done ? palette.fill : palette.soft }]}
         />
       )}
@@ -84,7 +94,9 @@ export function ProgressControl({ title, area, progress, onChange }: Props) {
 const styles = StyleSheet.create({
   pc: { gap: 8 },
   head: { flexDirection: "row", justifyContent: "space-between", alignItems: "baseline", gap: 12 },
-  title: { flex: 1, fontSize: 15, color: colors.ink },
+  titleWrap: { flex: 1, gap: 2 },
+  title: { fontSize: 15, color: colors.ink },
+  edit: { fontSize: 13, color: colors.muted, textDecorationLine: "underline", paddingVertical: 2 },
   done: { textDecorationLine: "line-through", color: colors.muted },
   label: { fontSize: 12 },
   countRow: { flexDirection: "row", alignItems: "center", gap: 8 },
@@ -102,7 +114,7 @@ const styles = StyleSheet.create({
   },
   iconBtnText: { fontSize: 22, lineHeight: 26, color: colors.ink },
   segs: { flexDirection: "row", gap: 4 },
-  seg: { flex: 1, height: 30, borderRadius: 8 },
+  seg: { flex: 1, height: 8, borderRadius: 999 },
   // `flex: 0` is shorthand for a 0% basis, which collapses this bar's height in a column.
-  binary: { width: "100%", height: 30, borderRadius: 8, flexGrow: 0, flexShrink: 0 },
+  binary: { width: "100%", height: 8, borderRadius: 999, flexGrow: 0, flexShrink: 0 },
 });
