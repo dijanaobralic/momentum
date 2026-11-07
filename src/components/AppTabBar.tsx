@@ -19,7 +19,7 @@ interface Props {
   navigateToTab: (routeKey: string) => void;
 }
 
-const SIDEBAR_OPEN = 232;
+const SIDEBAR_OPEN = 176;
 const SIDEBAR_CLOSED = 76;
 
 /** Phone: a bottom bar. Wide window: a sidebar that can fold down to icons. */
@@ -36,14 +36,14 @@ export function AppTabBar({ state, navigateToTab }: Props) {
       style={[
         wide ? styles.side : styles.bottom,
         wide
-          ? { width: folded ? SIDEBAR_CLOSED : SIDEBAR_OPEN, paddingTop: Math.max(insets.top, 24), paddingHorizontal: folded ? 10 : 16 }
+          ? { width: folded ? SIDEBAR_CLOSED : SIDEBAR_OPEN, paddingTop: Math.max(insets.top, 24), paddingHorizontal: folded ? 10 : 8 }
           : { paddingBottom: Math.max(insets.bottom, 10) },
       ]}
     >
       {wide ? (
         <View style={[styles.brandRow, folded && styles.brandRowFolded]}>
           {folded ? null : (
-            <Text style={[styles.brand, { fontFamily: type.headingBold }]}>
+            <Text numberOfLines={1} style={[styles.brand, { fontFamily: type.headingBold }]}>
               momentum<Text style={styles.brandDot}>.</Text>
             </Text>
           )}
@@ -79,7 +79,7 @@ export function AppTabBar({ state, navigateToTab }: Props) {
                 fallback={<View style={[styles.iconFallback, { borderColor: tint }]} />}
               />
               {folded ? null : (
-                <Text style={[styles.label, wide ? styles.sideLabel : styles.bottomLabel, { fontFamily: active ? type.bodySemibold : type.body, color: tint }]}>
+                <Text numberOfLines={1} style={[styles.label, wide ? styles.sideLabel : styles.bottomLabel, { fontFamily: active ? type.bodySemibold : type.body, color: tint }]}>
                   {tab.label}
                 </Text>
               )}
@@ -111,10 +111,10 @@ const styles = StyleSheet.create({
     paddingTop: 6,
     paddingHorizontal: 8,
   },
-  brandRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 4, marginBottom: 16 },
-  brandRowFolded: { justifyContent: "center", paddingHorizontal: 0 },
-  brand: { fontSize: 22, color: colors.ink, letterSpacing: -0.4, flexShrink: 1 },
-  toggle: { width: 44, height: 44, alignItems: "center", justifyContent: "center" },
+  brandRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 16 },
+  brandRowFolded: { justifyContent: "center" },
+  brand: { fontSize: 22, color: colors.ink, letterSpacing: -0.4, flexShrink: 0 },
+  toggle: { width: 32, height: 40, alignItems: "center", justifyContent: "center", flexShrink: 0 },
   toggleMark: { fontSize: 26, color: colors.ink, lineHeight: 28 },
   brandDot: { color: colors.accent },
   sideList: { gap: 6 },
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     gap: 10,
     paddingVertical: 11,
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     borderRadius: 10,
     minHeight: 44,
   },
