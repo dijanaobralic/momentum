@@ -90,3 +90,12 @@ export function areasMoved(actions: Action[]): Set<Area> {
  * past weeks (planned vs. done vs. how the week felt).
  */
 export const COMFORTABLE_LOAD = 9;
+
+/** Missing or false means the goal still shows. Only `true` archives it. */
+export function isActiveGoal(goal: { archived?: boolean }): boolean {
+  return goal.archived !== true;
+}
+
+export function newId(): string {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}

@@ -1,12 +1,15 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 import { seed } from "./seed";
-import type { AppState, Progress } from "./types";
+import type { AppState, Goal, Progress } from "./types";
 
 interface AppStateValue {
   state: AppState;
   setProgress: (id: string, progress: Progress) => void;
   reset: () => void;
+  saveGoal: (goal: Goal) => void;
+  deleteGoal: (id: string) => void;
+  setGoalArchived: (id: string, archived: boolean) => void;
 }
 
 const AppStateContext = createContext<AppStateValue | null>(null);
@@ -22,7 +25,33 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     }));
   }
 
-  return <AppStateContext.Provider value={{ state, setProgress, reset: () => setState(seed()) }}>{children}</AppStateContext.Provider>;
+  function saveGoal(goal: Goal) {
+    setState((prev) => ({
+      ...prev,
+      goals: prev.goals.some((item) => item.id === goal.id) ? prev.goals.map((item) => (item.id === goal.id ? goal : item)) : [...prev.goals, goal],
+    }));
+  }
+
+  function deleteGoal(id: string) {
+    setState((prev) => ({
+      ...prev,
+      goals: prev.goals.filter((goal) => goal.id !== id),
+      actions: prev.actions.filter((action) => action.goalId !== id),
+    }));
+  }
+
+  function setGoalArchived(id: string, archived: boolean) {
+    setState((prev) => ({
+      ...prev,
+      goals: prev.goals.map((goal) => (goal.id === id ? { ...goal, archived } : goal)),
+    }));
+  }
+
+  return (
+    <AppStateContext.Provider value={{ state, setProgress, reset: () => setState(seed()), saveGoal, deleteGoal, setGoalArchived }}>
+      {children}
+    </AppStateContext.Provider>
+  );
 }
 
 export function useAppState(): AppStateValue {

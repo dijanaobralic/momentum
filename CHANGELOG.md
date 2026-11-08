@@ -24,6 +24,7 @@ Bump `version` in `package.json` with every release, add an entry here, and tag 
 - Unit tests for week math and progress fractions (`npm test`).
 - Space Grotesk and Inter, the typefaces from the mockup.
 - **App shell.** Bottom bar on a phone (Week, Goals, Library, Wins) and a sidebar on a wide window. An orange check-in button opens "How did this week feel?" The feeling is not saved yet.
+- **Goals.** Add a goal from the Goals header: title, area (Health, Work, Fun, Love), horizon (with a plan, or this week only), why, and the plan or tracker name. Save stays off until the title has words. Each goal can be edited, archived, or deleted. Archive hides it from the active lists and from the week-screen goal chips, and it can be restored. Delete asks first, then removes the goal and its actions. A refresh still returns to the sample week.
 
 ---
 
@@ -32,7 +33,7 @@ Bump `version` in `package.json` with every release, add an entry here, and tag 
 The order is the current plan and can change. Details are in [`docs/HANDOFF.md`](docs/HANDOFF.md#roadmap).
 
 - **0.2.0: Sunday check-in.** 3-step flow: how the week felt → what worked / didn't → plan next week. Stores weekly reflections.
-- **0.3.0: Editing.** Add, edit and delete goals and actions in the app (today they come from sample data). Carry unfinished actions into next week.
+- **0.3.0: Editing.** Goals can be added, edited, archived, and deleted. Still to do: add and edit actions, and carry unfinished actions into next week. Saving the week on the device comes first, so a refresh keeps the change.
 - **0.4.0: Sync + sign-in.** Backend (Firebase or Supabase) so phone and desktop share data.
 - **0.5.0: Coach v1.** Scale-down suggestions based on planned vs. done vs. how the week felt.
 - **0.6.0: Library + Wins.** Attach plans/trackers to goals; wins timeline and totals.

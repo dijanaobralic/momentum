@@ -32,6 +32,7 @@ Area (4, fixed)
  └── Goal
       ├── horizon: 'long' (has a plan/tracker "artifact")  or  'week' (one-off)
       ├── why      (shown next to its weekly actions)
+      ├── archived (optional; missing or false means active)
       └── Action   (belongs to one week: weekOf = Monday's date)
            └── Progress: count | steps | binary
 ```
@@ -59,6 +60,8 @@ Area (4, fixed)
 
 **Works:** the app shell around the Week screen. On a phone, a bottom bar (Week, Goals, Library, Wins) and an orange check-in button. On a wide window, a sidebar with the name and the mantra, and a Check in pill on Week. Goals and Wins read the same sample week. The check-in screen asks how the week felt; that choice is not saved yet. Progress lives in memory for the session.
 
+**Goals:** "Add a goal" collects title (required), area, horizon, why, and the plan or tracker name. Each goal can be edited, archived, or deleted. Archive is not delete: an archived goal leaves the active lists and the week-screen chips, and Archived at the bottom of Goals can restore it. Delete asks, then removes the goal and its actions. A refresh still loads the sample week.
+
 **Next:** local storage behind a data layer, with the same API on web and Android, so a refresh keeps what you logged. After that, finish the Sunday check-in (the other two steps, and saving the reflection).
 
 ## 5. Tech stack and architecture
@@ -84,7 +87,9 @@ src/
     (tabs)/library.tsx       Library placeholder
     (tabs)/wins.tsx          Wins
     check-in.tsx             "How did this week feel?"
+    goal/[id].tsx            create or edit a goal
   components/
+    Form.tsx                 fields for the goal editor
     AppTabBar.tsx
     CheckInButton.tsx        orange button on a phone, pill on a wide window
     Page.tsx                 shared page scroll and header
@@ -186,6 +191,7 @@ Each item has acceptance criteria. Build them in order unless the owner says oth
 | 2026-10-30 | Weeks start Monday; check-in Sunday | Owner's preference |
 | 2026-11-02 | One codebase as a PWA (React + Vite) | Covers Android and desktop; no app store needed |
 | 2026-11-02 | localStorage first, backend later | Get the experience right before infrastructure |
+| 2026-11-08 | Archive hides a goal; delete removes it and its actions | Archive is reversible. Missing or `false` on `archived` means the goal is active |
 
 ## 10. Open questions (ask the owner)
 
