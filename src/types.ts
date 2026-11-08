@@ -19,6 +19,8 @@ export interface Goal {
   /** Link to the plan / tracker (training plan, finance spreadsheet...). */
   artifactTitle?: string;
   artifactUrl?: string;
+  /** Hidden from the active lists and the week chips. Missing or false means active. */
+  archived?: boolean;
 }
 
 export interface Action {

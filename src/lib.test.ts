@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { areasMoved, bumpCount, fraction, isDone, mondayOf, progressLabel, tapStep, weekLabel } from "./lib";
+import { areasMoved, bumpCount, fraction, isActiveGoal, isDone, mondayOf, progressLabel, tapStep, weekLabel } from "./lib";
 import type { Action } from "./types";
 
 describe("mondayOf", () => {
@@ -15,6 +15,14 @@ describe("mondayOf", () => {
 
   it("walks Wednesday back to Monday", () => {
     assert.equal(mondayOf(new Date(2026, 10, 4)), "2026-11-02");
+  });
+});
+
+describe("isActiveGoal", () => {
+  it("treats a missing or false archive flag as active", () => {
+    assert.equal(isActiveGoal({}), true);
+    assert.equal(isActiveGoal({ archived: false }), true);
+    assert.equal(isActiveGoal({ archived: true }), false);
   });
 });
 
