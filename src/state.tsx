@@ -14,6 +14,7 @@ interface AppStateValue {
   reset: () => void;
   saveGoal: (goal: Goal) => void;
   deleteGoal: (id: string) => void;
+  setGoalArchived: (id: string, archived: boolean) => void;
   saveAction: (action: Action) => void;
   deleteAction: (id: string) => void;
   moveToWeek: (id: string, weekOf: string) => void;
@@ -67,6 +68,13 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     }));
   }
 
+  function setGoalArchived(id: string, archived: boolean) {
+    setState((prev) => ({
+      ...prev,
+      goals: prev.goals.map((goal) => (goal.id === id ? { ...goal, archived } : goal)),
+    }));
+  }
+
   function saveAction(action: Action) {
     setState((prev) => ({
       ...prev,
@@ -110,6 +118,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         reset: () => setState(withReflections(seed())),
         saveGoal,
         deleteGoal,
+        setGoalArchived,
         saveAction,
         deleteAction,
         moveToWeek,

@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text } from "react-native";
 import { Choice, Field, FormBlock, SaveBar } from "../../components/Form";
 import { Page, PageHeader } from "../../components/Page";
 import { useType } from "../../fonts";
-import { AREAS, defaultProgress, newId } from "../../lib";
+import { AREAS, defaultProgress, isActiveGoal, newId } from "../../lib";
 import { useAppState } from "../../state";
 import { colors } from "../../theme";
 import type { Action, Area, Progress } from "../../types";
@@ -65,7 +65,12 @@ function ActionForm({ actionId, weekParam }: { actionId: string; weekParam: stri
     });
   }
 
-  const goalOptions = [{ value: "", label: "None" }, ...state.goals.map((goal) => ({ value: goal.id, label: goal.title }))];
+  const goalOptions = [
+    { value: "", label: "None" },
+    ...state.goals
+      .filter((goal) => isActiveGoal(goal) || goal.id === action.goalId)
+      .map((goal) => ({ value: goal.id, label: goal.title })),
+  ];
 
   return (
     <Page>

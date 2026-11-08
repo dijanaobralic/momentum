@@ -26,6 +26,7 @@ Bump `version` in `package.json` with every release, add an entry here, and tag 
 - **App shell.** Bottom bar on a phone (Week, Goals, Library, Wins) and a sidebar on a wide window. The sidebar stays a fixed width and folds to icons.
 - **Saved on the device.** The week is stored under `momentum:v1`. Web uses `localStorage`. Android and iOS use the same API, backed by `expo-sqlite`. A refresh keeps what you logged. "Reset sample data" brings the sample week back.
 - **Editing.** Add, edit, and delete goals and actions. A number in a new action's title starts it as a count; otherwise it starts as quarters.
+- **Archive.** A goal can be archived without deleting it. It leaves the active lists and the week-screen chips, and Archived can restore it. A goal saved before archive existed still loads. Missing or false means active. Delete still asks, then removes the goal and its actions.
 - **Weeks.** Previous and next week, and a way back to this week. Unfinished actions can move to next week from the coach or the check-in, and they start over there.
 - **Sunday check-in.** Three steps: how the week felt, what worked and what didn't, then a summary and what to carry. The reflection stays on that week.
 - **Coach.** Shows when a week has 9 or more actions, with a shorter note at exactly 9 and a scale-down note above that. Each open action can move to next week.

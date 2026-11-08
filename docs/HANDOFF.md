@@ -32,6 +32,7 @@ Area (4, fixed)
  └── Goal
       ├── horizon: 'long' (has a plan/tracker "artifact")  or  'week' (one-off)
       ├── why      (shown next to its weekly actions)
+      ├── archived (optional; missing or false means active)
       └── Action   (belongs to one week: weekOf = Monday's date)
            └── Progress: count | steps | binary
 ```
@@ -57,7 +58,7 @@ Area (4, fixed)
 
 ## 4. Current state (0.2.0-dev)
 
-**Works:** the app shell, a saved week, editing, and the Sunday check-in. On a phone, a bottom bar (Week, Goals, Library, Wins). On a wide window, a sidebar with the name and the mantra. A ‹ control folds that sidebar down to icons, and › opens it again. Check in sits in the Week header on every width, so it does not cover the areas card. You can page to other weeks, add and edit goals and actions, and move an unfinished action to next week. The check-in saves how the week felt, what worked, what didn't, and which actions moved. A refresh keeps all of that on the device. The sample week is still the first thing you see, until you change it. The coach appears at 9 actions.
+**Works:** the app shell, a saved week, editing, and the Sunday check-in. On a phone, a bottom bar (Week, Goals, Library, Wins). On a wide window, a sidebar with the name and the mantra. A ‹ control folds that sidebar down to icons, and › opens it again. Check in sits in the Week header on every width, so it does not cover the areas card. You can page to other weeks, add and edit goals and actions, and move an unfinished action to next week. Archive hides a goal from the active lists and the week chips until you restore it. Delete asks, then removes the goal and its actions. The check-in saves how the week felt, what worked, what didn't, and which actions moved. A refresh keeps all of that on the device, including the archive flag. The sample week is still the first thing you see, until you change it. The coach appears at 9 actions.
 
 **Next:** sign-in and sync, so a week logged on the phone shows up on the computer. Keep writing on the device first. The coach's real job (planned vs. done vs. how the week felt) comes after there is more than one saved week to learn from.
 
@@ -193,6 +194,7 @@ Each item has acceptance criteria. 0.2.0 and 0.3.0 are in the app. Build the res
 | 2026-10-30 | Weeks start Monday; check-in Sunday | Owner's preference |
 | 2026-11-02 | One codebase as a PWA (React + Vite) | Covers Android and desktop; no app store needed |
 | 2026-11-02 | localStorage first, backend later | Get the experience right before infrastructure |
+| 2026-11-08 | Archive hides a goal; delete removes it and its actions | Archive is reversible. Missing or `false` on `archived` means the goal is active |
 
 ## 10. Open questions (ask the owner)
 

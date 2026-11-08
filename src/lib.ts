@@ -126,13 +126,18 @@ export function newId(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+/** Missing or false means the goal still shows. Only `true` archives it. */
+export function isActiveGoal(goal: { archived?: boolean }): boolean {
+  return goal.archived !== true;
+}
+
 export function parseStored(raw: string | null): AppState | null {
   if (!raw) return null;
   try {
     const data = JSON.parse(raw) as Partial<AppState>;
     if (!Array.isArray(data.goals) || !Array.isArray(data.actions)) return null;
     return {
-      goals: data.goals.filter(isGoal),
+      goals: data.goals.filter(isGoal).map(withArchive),
       actions: data.actions.filter(isAction),
       reflections: Array.isArray(data.reflections) ? data.reflections.filter(isReflection) : [],
     };
@@ -149,6 +154,15 @@ function isGoal(value: unknown): value is Goal {
   if (!value || typeof value !== "object") return false;
   const goal = value as Goal;
   return typeof goal.id === "string" && typeof goal.title === "string" && isArea(goal.area) && (goal.horizon === "long" || goal.horizon === "week");
+}
+
+/** Keep a real archive flag. Drop anything else so an older save still loads. */
+function withArchive(goal: Goal): Goal {
+  if (goal.archived === true) return { ...goal, archived: true };
+  if (goal.archived === false) return { ...goal, archived: false };
+  if (!("archived" in goal)) return goal;
+  const { archived: _drop, ...rest } = goal;
+  return rest;
 }
 
 function isProgress(value: unknown): value is Progress {

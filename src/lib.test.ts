@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { areasMoved, bumpCount, defaultProgress, fraction, freshProgress, isDone, mondayOf, parseStored, progressLabel, shiftWeek, tapStep, weekLabel } from "./lib";
+import { areasMoved, bumpCount, defaultProgress, fraction, freshProgress, isActiveGoal, isDone, mondayOf, parseStored, progressLabel, shiftWeek, tapStep, weekLabel } from "./lib";
 import type { Action } from "./types";
 
 describe("mondayOf", () => {
@@ -74,6 +74,27 @@ describe("progress helpers", () => {
       unit: "h",
       step: 0.5,
     });
+  });
+
+  it("keeps an archive flag and still reads a goal saved before archive existed", () => {
+    const raw = JSON.stringify({
+      goals: [
+        { id: "old", area: "health", title: "Race", horizon: "long" },
+        { id: "away", area: "fun", title: "Albums", horizon: "week", archived: true },
+        { id: "back", area: "work", title: "Job", horizon: "long", archived: false },
+        { id: "odd", area: "social", title: "Friends", horizon: "week", archived: "yes" },
+      ],
+      actions: [],
+    });
+    const stored = parseStored(raw);
+    assert.equal(stored?.goals.length, 4);
+    assert.equal(stored?.goals[0].archived, undefined);
+    assert.equal(stored?.goals[1].archived, true);
+    assert.equal(stored?.goals[2].archived, false);
+    assert.equal(stored?.goals[3].archived, undefined);
+    assert.equal(isActiveGoal(stored!.goals[0]), true);
+    assert.equal(isActiveGoal(stored!.goals[1]), false);
+    assert.equal(isActiveGoal(stored!.goals[2]), true);
   });
 
   it("reads a saved week and ignores a broken one", () => {

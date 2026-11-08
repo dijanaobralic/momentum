@@ -20,7 +20,7 @@ export default function GoalEditor() {
 }
 
 function GoalForm({ goalId }: { goalId: string }) {
-  const { state, saveGoal, deleteGoal } = useAppState();
+  const { state, saveGoal, deleteGoal, setGoalArchived } = useAppState();
   const type = useType();
   const existing = state.goals.find((goal) => goal.id === goalId);
   const creating = goalId === "new";
@@ -91,19 +91,31 @@ function GoalForm({ goalId }: { goalId: string }) {
           }}
         />
         {!creating ? (
-          confirmDelete ? (
-            <SaveBar
-              label="Yes, delete this goal"
+          <>
+            <Pressable
+              accessibilityRole="button"
               onPress={() => {
-                deleteGoal(goal.id);
+                setGoalArchived(goal.id, existing?.archived !== true);
                 router.back();
               }}
-            />
-          ) : (
-            <Pressable accessibilityRole="button" onPress={() => setConfirmDelete(true)} style={styles.delete}>
-              <Text style={[styles.deleteText, { fontFamily: type.body }]}>Delete goal</Text>
+              style={styles.delete}
+            >
+              <Text style={[styles.deleteText, { fontFamily: type.body }]}>{existing?.archived ? "Restore goal" : "Archive goal"}</Text>
             </Pressable>
-          )
+            {confirmDelete ? (
+              <SaveBar
+                label="Yes, delete this goal"
+                onPress={() => {
+                  deleteGoal(goal.id);
+                  router.back();
+                }}
+              />
+            ) : (
+              <Pressable accessibilityRole="button" onPress={() => setConfirmDelete(true)} style={styles.delete}>
+                <Text style={[styles.deleteText, { fontFamily: type.body }]}>Delete goal</Text>
+              </Pressable>
+            )}
+          </>
         ) : null}
       </FormBlock>
     </Page>

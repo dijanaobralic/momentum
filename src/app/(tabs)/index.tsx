@@ -5,7 +5,7 @@ import { CheckInPill } from "../../components/CheckInButton";
 import { Page, PageHeader } from "../../components/Page";
 import { ProgressControl } from "../../components/ProgressControl";
 import { useType } from "../../fonts";
-import { AREAS, areasMoved, COMFORTABLE_LOAD, fraction, mondayOf, shiftWeek, weekLabel } from "../../lib";
+import { AREAS, areasMoved, COMFORTABLE_LOAD, fraction, isActiveGoal, mondayOf, shiftWeek, weekLabel } from "../../lib";
 import { useAppState } from "../../state";
 import { areaColors, colors } from "../../theme";
 import type { Action, Goal } from "../../types";
@@ -117,7 +117,7 @@ export default function WeekScreen() {
           const goalIds = [...new Set(items.map((item) => item.goalId).filter((id): id is string => !!id))];
           const longGoals = goalIds
             .map((id) => goalById.get(id))
-            .filter((goal): goal is Goal => !!goal && goal.horizon === "long");
+            .filter((goal): goal is Goal => !!goal && goal.horizon === "long" && isActiveGoal(goal));
           return (
             <View key={area.id} style={[styles.areaCard, wide ? styles.radiusWide : styles.radiusPhone, wide && styles.areaWide]}>
               <View style={styles.areaHead}>
